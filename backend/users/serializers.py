@@ -51,8 +51,7 @@ class CreateUserSerializer(UserCreateSerializer):
             'id',
             'username',
             'first_name',
-            'last_name',
-            'password'
+            'last_name'
         )
         extra_kwargs = {'password': {'write_only': True}}
 
