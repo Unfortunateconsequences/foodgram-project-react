@@ -31,7 +31,7 @@ class UserInfoSerializer(UserSerializer):
             return Subscriptions.objects.filter(
                 user=user, author=obj
             ).exists()
-        return True
+        return False
 
 
 class CreateUserSerializer(UserCreateSerializer):
