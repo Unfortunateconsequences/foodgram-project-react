@@ -16,8 +16,7 @@ SECRET_KEY = os.getenv(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.getenv('FOODGRAM_DEBUG', False)
-DEBUG = True
+DEBUG = os.getenv('FOODGRAM_DEBUG', False)
 
 ALLOWED_HOSTS = ['*']
 
