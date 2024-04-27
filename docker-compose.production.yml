@@ -24,7 +24,7 @@ services:
           memory: 4G
 
   backend:
-    image: unf0rtunate/foodgram_backend
+    image: unf0rtunate/foodgram-backend
     env_file: .env
     depends_on:
       - db
@@ -34,7 +34,7 @@ services:
       - ./data:/data/
 
   frontend:
-    image: unf0rtunate/foodgram_frontend
+    image: unf0rtunate/foodgram-frontend
     volumes:
       - static:/static
 
