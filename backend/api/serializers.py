@@ -1,18 +1,12 @@
-from django.db import transaction
 from django.core.validators import EmailValidator, MinLengthValidator
+from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import (
-    Tag,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Cart,
-    Favorites
-)
+from recipes.models import (Cart, Favorites, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 from users.models import MyUser, Subscriptions
 
 MIN_PASSWORD_LENGTH = 8
@@ -50,7 +44,7 @@ class CreateUserSerializer(UserCreateSerializer):
     password = serializers.CharField(
         validators=[MinLengthValidator(
             MIN_PASSWORD_LENGTH,
-            message='Пароль должен быть не короче 8 символов!'),]
+            message='Пароль должен быть не короче 8 символов!'), ]
     )
 
     class Meta:

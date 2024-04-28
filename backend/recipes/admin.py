@@ -1,19 +1,10 @@
-from typing import Any
 from django.contrib import admin
 from django.db.models import Count
-from django.http import HttpRequest
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from recipes.models import (
-    Tag,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    TagRecipe,
-    Cart,
-    Favorites
-)
+from recipes.models import (Cart, Favorites, Ingredient, Recipe,
+                            RecipeIngredient, Tag, TagRecipe)
 
 
 @admin.register(Tag)

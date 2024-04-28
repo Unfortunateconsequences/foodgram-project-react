@@ -1,45 +1,27 @@
 from django.db import IntegrityError
 from django.db.models import Sum
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-
-from rest_framework import status, filters
+from rest_framework import filters, status
 from rest_framework.decorators import action
-from rest_framework.permissions import (
-    AllowAny,
-    IsAdminUser,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.cart import shopping_cart_pdf
-from api.filters import RecipeFilter, IngredientSearch
+from api.filters import IngredientSearch, RecipeFilter
 from api.pagination import LimitNumberPagination
-from api.permissions import ReadOnly, IsOwnerOrReadOnly
-from api.serializers import (
-    TagSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeSerializer,
-    FavoritesSerializer,
-    RecipeIntroSerializer,
-    CartSerializer,
-    SubscriptionSerializer
-)
-
-from recipes.models import (
-    Tag,
-    Ingredient,
-    Recipe,
-    Favorites,
-    Cart,
-    RecipeIngredient,
-)
+from api.permissions import IsOwnerOrReadOnly, ReadOnly
+from api.serializers import (CartSerializer, FavoritesSerializer,
+                             IngredientSerializer, RecipeCreateSerializer,
+                             RecipeIntroSerializer, RecipeSerializer,
+                             SubscriptionSerializer, TagSerializer)
+from recipes.models import (Cart, Favorites, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 from users.models import MyUser, Subscriptions
-from users.serializers import UserInfoSerializer, CreateUserSerializer
+from .serializers import CreateUserSerializer, UserInfoSerializer
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -150,9 +132,9 @@ class CustomUserViewSet(UserViewSet):
 
     def get_permissions(self):
         if self.action == 'me':
-            self.permission_classes = [IsAuthenticated,]
+            self.permission_classes = [IsAuthenticated, ]
         elif self.action == 'set_password':
-            self.permission_classes = [IsAuthenticated,]
+            self.permission_classes = [IsAuthenticated, ]
         return super().get_permissions()
 
     @action(detail=False, methods=['post'])
