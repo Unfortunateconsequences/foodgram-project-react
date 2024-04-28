@@ -1,6 +1,6 @@
 # praktikum_new_diplom
-https://theamazingfoodgram.sytes.net/
-0100nrq@gmail.com:thepassword log:pass
+### https://theamazingfoodgram.sytes.net/
+### 0100nrq@gmail.com:thepassword log:pass
 Прим. для проверяющего: не работает /users/{id} без авторизации - не могу понять, почему,
 менял и пермишны и вью, ничего не помогает... (прошу помощи); Код в плохом состоянии, тороплюсь сдать. Эта версия - чтобы успеть получить важные замечания.
 В ближайшее время доделаю импорты, чтобы не давили на глаза и докстринги.
