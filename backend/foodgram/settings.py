@@ -20,6 +20,8 @@ DEBUG = os.getenv('FOODGRAM_DEBUG', False)
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://*theamazingfoodgram.sytes.net']
+
 # Application definition
 
 INSTALLED_APPS = [
