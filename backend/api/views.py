@@ -18,9 +18,9 @@ from api.serializers import (CartSerializer, FavoritesSerializer,
                              IngredientSerializer, RecipeCreateSerializer,
                              RecipeIntroSerializer, RecipeSerializer,
                              SubscriptionSerializer, TagSerializer)
-from recipes.models import (Cart, Favorites, Ingredient, Recipe,
+from recipes.models import (Cart, Favorite, Ingredient, Recipe,
                             RecipeIngredient, Tag)
-from users.models import MyUser, Subscriptions
+from users.models import FoodgramUser, Subscription
 from .serializers import CreateUserSerializer, UserInfoSerializer
 
 
@@ -93,11 +93,11 @@ class RecipeViewSet(ModelViewSet):
 
     @action(methods=['post'], detail=True)
     def favorite(self, request, pk=None):
-        return self.add_item(Favorites, FavoritesSerializer, request, pk)
+        return self.add_item(Favorite, FavoritesSerializer, request, pk)
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk=None):
-        return self.delete_item(Favorites, request, pk)
+        return self.delete_item(Favorite, request, pk)
 
     @action(methods=['post'], detail=True)
     def shopping_cart(self, request, pk=None):
@@ -121,7 +121,7 @@ class RecipeViewSet(ModelViewSet):
 
 
 class CustomUserViewSet(UserViewSet):
-    queryset = MyUser.objects.all()
+    queryset = FoodgramUser.objects.all()
     pagination_class = LimitNumberPagination
     permission_classes = (AllowAny,)
 
@@ -157,7 +157,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, id):
-        author = get_object_or_404(MyUser, pk=id)
+        author = get_object_or_404(FoodgramUser, pk=id)
 
         if request.method == 'POST':
             try:
@@ -173,7 +173,7 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        subscription = Subscriptions.objects.filter(
+        subscription = Subscription.objects.filter(
             user=request.user,
             author=author
         )
@@ -190,10 +190,8 @@ class CustomUserViewSet(UserViewSet):
     @action(methods=['get'], detail=False,
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
-        if self.request.user.is_anonymous:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         user = self.request.user
-        subscriptions = Subscriptions.objects.filter(user=user)
+        subscriptions = Subscription.objects.filter(user=user)
         paginator = LimitNumberPagination()
         result_page = paginator.paginate_queryset(subscriptions, request)
         serializer = SubscriptionSerializer(

@@ -3,7 +3,7 @@ from django.db.models import Count
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from recipes.models import (Cart, Favorites, Ingredient, Recipe,
+from recipes.models import (Cart, Favorite, Ingredient, Recipe,
                             RecipeIngredient, Tag, TagRecipe)
 
 
@@ -54,7 +54,7 @@ class TagRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'tag')
 
 
-@admin.register(Favorites)
+@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user')
 

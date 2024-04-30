@@ -7,7 +7,7 @@ MAX_LENGTH_EMAIL = 254
 MAX_LENGTH_USERNAME = 150
 
 
-class MyUser(AbstractUser):
+class FoodgramUser(AbstractUser):
 
     email = models.EmailField(
         'email address',
@@ -43,16 +43,16 @@ class MyUser(AbstractUser):
         return f'{self.username}: {self.email}'
 
 
-class Subscriptions(models.Model):
+class Subscription(models.Model):
 
     user = models.ForeignKey(
-        MyUser,
+        FoodgramUser,
         related_name='subscriber',
         on_delete=models.CASCADE,
         verbose_name='Подписчик'
     )
     author = models.ForeignKey(
-        MyUser,
+        FoodgramUser,
         related_name='author',
         on_delete=models.CASCADE,
         verbose_name='Автор рецепта'

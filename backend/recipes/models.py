@@ -2,7 +2,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from users.models import MyUser
+from users.models import FoodgramUser
 
 MAX_LENGTH = 200
 MIN_TIME = 1
@@ -51,7 +51,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
 
     author = models.ForeignKey(
-        MyUser,
+        FoodgramUser,
         on_delete=models.CASCADE,
         related_name='recipes'
     )
@@ -104,6 +104,7 @@ class TagRecipe(models.Model):
     class Meta:
         verbose_name = 'Тэг рецепта'
         verbose_name_plural = 'Тэги рецептов'
+        unique_together = ('tag', 'recipe')
 
     def __str__(self):
         return f'{self.recipe} присвоен тег {self.tag}.'
@@ -131,6 +132,7 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
+        unique_together = ('recipe', 'ingredient')
 
     def __str__(self):
         return (
@@ -139,7 +141,7 @@ class RecipeIngredient(models.Model):
         )
 
 
-class Favorites(models.Model):
+class Favorite(models.Model):
 
     recipe = models.ForeignKey(
         Recipe,
@@ -147,7 +149,7 @@ class Favorites(models.Model):
         verbose_name='Пользователь'
     )
     user = models.ForeignKey(
-        MyUser,
+        FoodgramUser,
         on_delete=models.CASCADE,
         related_name='favorites',
         verbose_name='Рецепт'
@@ -172,7 +174,7 @@ class Cart(models.Model):
         on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        MyUser,
+        FoodgramUser,
         on_delete=models.CASCADE
     )
 
