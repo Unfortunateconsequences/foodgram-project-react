@@ -13,7 +13,9 @@ MIN_PASSWORD_LENGTH = 8
 
 
 class UserInfoSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subcribed'
+    )
 
     class Meta:
         model = FoodgramUser

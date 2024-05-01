@@ -70,14 +70,22 @@ class RecipeViewSet(ModelViewSet):
 
     def add_item(self, model, serializer, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        try:
-            item = model.objects.create(recipe=recipe, user=request.user)
-            serializer = serializer(item)
-        except IntegrityError:
+        user = request.user
+        if model.objects.filter(
+            user=user,
+            recipe__id=pk
+        ).exists():
             return Response(
                 {'message': 'Рецепт уже добавлен'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        item = model.objects.create(
+            recipe=recipe,
+            user=request.user
+        )
+        # а как без строки 88 инициировать сериализацию
+        # конкретного созданного объекта?
+        serializer = serializer(item)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
     def delete_item(self, model, request, pk=None):
@@ -158,26 +166,31 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id):
         author = get_object_or_404(FoodgramUser, pk=id)
+        user = request.user
 
         if request.method == 'POST':
-            try:
-                serializer = SubscriptionSerializer(
-                    data={'user': request.user.pk, 'author': author.pk},
-                    context={'request': request},
-                )
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-            except IntegrityError:
+            if Subscription.objects.filter(
+                user=user, author=author
+            ).exists():
                 return Response(
                     {'message': 'Вы уже подписаны!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    status=status.HTTP_400_BAD_REQUEST)
+            serializer = SubscriptionSerializer(
+                data={'user': request.user.pk,
+                      'author': author.pk},
+                context={'request': request},
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
         subscription = Subscription.objects.filter(
             user=request.user,
             author=author
         )
-
         if subscription.exists():
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

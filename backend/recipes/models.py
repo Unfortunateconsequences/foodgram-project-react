@@ -12,6 +12,7 @@ MIN_AMOUNT = 1
 class Tag(models.Model):
 
     name = models.CharField(
+        verbose_name='Название тэга',
         unique=True,
         max_length=MAX_LENGTH
     )
@@ -19,6 +20,7 @@ class Tag(models.Model):
         default='#FF0000'
     )
     slug = models.SlugField(
+        verbose_name='Уникальный идентификатор',
         unique=True,
         null=False
     )
@@ -34,9 +36,11 @@ class Tag(models.Model):
 class Ingredient(models.Model):
 
     name = models.CharField(
+        verbose_name='Название ингредиента',
         max_length=MAX_LENGTH
     )
     measurement_unit = models.CharField(
+        verbose_name='Единицы измерения',
         max_length=MAX_LENGTH
     )
 
@@ -53,25 +57,33 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         FoodgramUser,
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Автор рецепта',
     )
     name = models.CharField(
+        verbose_name='Название рецепта',
         max_length=MAX_LENGTH
     )
     image = models.ImageField(
+        verbose_name='Изображение',
         upload_to='recipes/'
     )
-    text = models.TextField()
+    text = models.TextField(
+        verbose_name='Текст рецепта',
+    )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Ингредиаенты',
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Тэги рецепта',
     )
     cooking_time = models.PositiveSmallIntegerField(
+        verbose_name='Время приготовления',
         validators=[
             MinValueValidator(
                 MIN_TIME,
@@ -79,6 +91,7 @@ class Recipe(models.Model):
         ]
     )
     pub_date = models.DateTimeField(
+        verbose_name='Дата публикации',
         auto_now_add=True
     )
 
@@ -94,17 +107,24 @@ class Recipe(models.Model):
 class TagRecipe(models.Model):
     tag = models.ForeignKey(
         Tag,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Тэг',
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
     )
 
     class Meta:
         verbose_name = 'Тэг рецепта'
         verbose_name_plural = 'Тэги рецептов'
-        unique_together = ('tag', 'recipe')
+        constraints = (
+            models.UniqueConstraint(
+                fields=['tag', 'recipe'],
+                name='unique_tag_recipe'
+            ),
+        )
 
     def __str__(self):
         return f'{self.recipe} присвоен тег {self.tag}.'
@@ -113,15 +133,18 @@ class TagRecipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
     )
 
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Ингредиент'
     )
 
     amount = models.PositiveSmallIntegerField(
+        verbose_name='',
         validators=[
             MinValueValidator(
                 MIN_AMOUNT,
@@ -132,7 +155,12 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
-        unique_together = ('recipe', 'ingredient')
+        constraints = (
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            ),
+        )
 
     def __str__(self):
         return (
@@ -146,13 +174,13 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь'
+        verbose_name='Рецепт'
     )
     user = models.ForeignKey(
         FoodgramUser,
         on_delete=models.CASCADE,
         related_name='favorites',
-        verbose_name='Рецепт'
+        verbose_name='Пользователь'
     )
 
     class Meta:
@@ -171,11 +199,13 @@ class Favorite(models.Model):
 class Cart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт в корзине'
     )
     user = models.ForeignKey(
         FoodgramUser,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
     )
 
     class Meta:

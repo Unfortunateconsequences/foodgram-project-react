@@ -10,7 +10,7 @@ MAX_LENGTH_USERNAME = 150
 class FoodgramUser(AbstractUser):
 
     email = models.EmailField(
-        'email address',
+        'email-адрес',
         max_length=MAX_LENGTH_EMAIL,
         unique=True
     )
