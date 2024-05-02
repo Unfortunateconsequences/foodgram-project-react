@@ -12,6 +12,16 @@ from users.models import FoodgramUser, Subscription
 MIN_PASSWORD_LENGTH = 8
 
 
+def get_sub_info(self, obj):
+    """Функция поиска наличия/отсутсвия подписки."""
+    user = self.context['request'].user
+    if user.is_authenticated:
+        return Subscription.objects.filter(
+            user=user, author=obj
+        ).exists()
+    return False
+
+
 class UserInfoSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField(
         method_name='get_is_subcribed'
@@ -29,12 +39,7 @@ class UserInfoSerializer(UserSerializer):
         )
 
     def get_is_subcribed(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            return Subscription.objects.filter(
-                user=user, author=obj
-            ).exists()
-        return False
+        return get_sub_info(self, obj)
 
 
 class CreateUserSerializer(UserCreateSerializer):
@@ -352,9 +357,7 @@ class SubscriptionGetSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        return (request.user.is_authenticated or Subscription.objects.filter(
-            user=request.user, author=obj.id).exists())
+        return get_sub_info(self, obj)
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()

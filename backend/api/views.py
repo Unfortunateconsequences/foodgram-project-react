@@ -82,8 +82,6 @@ class RecipeViewSet(ModelViewSet):
             recipe=recipe,
             user=request.user
         )
-        # а как без строки 88 инициировать сериализацию
-        # конкретного созданного объекта?
         serializer = serializer(item)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
